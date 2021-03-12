@@ -3,6 +3,7 @@ import { useState } from "react";
 import "../styles/tasklist.scss";
 
 import { FiTrash, FiCheckSquare } from "react-icons/fi";
+import { transform } from "@babel/core";
 
 interface Task {
   id: number;
@@ -16,7 +17,6 @@ export function TaskList() {
   const [newTaskTitle, setNewTaskTitle] = useState("");
 
   function handleCreateNewTask() {
-    console.log(newTaskTitle);
     const task = {
       id: idCounter,
       title: newTaskTitle,
@@ -29,14 +29,23 @@ export function TaskList() {
   }
 
   function handleToggleTaskCompletion(id: number) {
-    tasks.map((task) => {
-      if (task.id === id) {
-        task.isComplete = true;
-      }
-    });
+    const newTask = tasks.map((task) =>
+      task.id === id
+        ? {
+            ...task,
+            isComplete: !task.isComplete,
+          }
+        : task
+    );
+
+    setTasks(newTask);
   }
 
-  function handleRemoveTask(id: number) {}
+  function handleRemoveTask(id: number) {
+    const filtredTask = tasks.filter((task) => task.id !== id);
+
+    setTasks(filtredTask);
+  }
 
   return (
     <section className="task-list container">
